@@ -26,14 +26,14 @@ class VikuThrifalisti:
         foreldri.add_allocation(Allocation(self.__vika, hus))
         self.__thrifalisti_fyrir_viku[hus] = foreldri
 
-
     def try_set_foreldri(self, foreldri):
         husalisti = foreldri.get_husalisti()
         shuffle(husalisti)
         for hus in husalisti:
             if not self.__thrifalisti_fyrir_viku[hus]:
                 self.set_foreldri_i_husi(hus, foreldri)
-                return hus
+                return True
+        return False
 
         return None
 

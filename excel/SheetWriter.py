@@ -1,5 +1,6 @@
 from excel.Column import convert_to_num, Column
 from excel.Utils import filter_cols_before_start
+from excel.sheet_infos.YfirlitSheetInfo import YfirlitSheetInfo
 
 
 class SheetWriter:
@@ -44,6 +45,9 @@ class ThrifalistiSheetWriter(SheetWriter):
 
 class YfirlitSheetWriter(SheetWriter):
     def _map_to_dtos(self, foreldralisti):
+        if self._info.get_type() == YfirlitSheetInfo.Types.LS:
+            foreldralisti = list(filter(lambda f: any(h.get_nafn() == "Leikskóli" for h in f.get_husalisti()), foreldralisti))
+        foreldralisti.sort(key=lambda f: f.get_count(), reverse=True)
         return [self._mapper.map_to_dto(f) for f in foreldralisti]
 
     def _get_write_value(self, dto, col):

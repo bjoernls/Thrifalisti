@@ -1,12 +1,14 @@
+from entity.Stillingar import Stillingar
 from excel.Column import Column
 from excel.SheetReader import SheetReader, ThrifalistiSheetReader, get_sheet_value
 from excel.SheetWriter import ThrifalistiSheetWriter, YfirlitSheetWriter
 from excel.dto.ForeldriDto import ForeldriDto
 from excel.dto.HusDto import HusDto
+from excel.dto.StillingarDto import StillingarDto
 from excel.dto.ThrifalistiDto import ThrifalistiDto, ThrifalistiColumn
-from excel.dto.YfirlitDto import YfirlitDto
 from excel.sheet_infos.ForeldriSheetInfo import ForeldriSheetInfo
 from excel.sheet_infos.HusSheetInfo import HusSheetInfo
+from excel.sheet_infos.StillingarSheetInfo import StillingarSheetInfo
 from excel.sheet_infos.ThrifalistiSheetInfo import ThrifalistiSheetInfo
 from excel.sheet_infos.YfirlitSheetInfo import YfirlitSheetInfo
 from mapper.Mapper import HusMapper, ForeldriMapper, ThrifalistiMapper, YfirlitMapper
@@ -73,6 +75,26 @@ class SheetHandler:
         raise NotImplementedError
 
 
+class StillingarSheetHandler(SheetHandler):
+    def __init__(self, wb):
+        super().__init__(wb)
+
+    def read(self):
+        return Stillingar(self._get_reader().read())
+
+    def _get_columns(self):
+        columns = [Column("A", lambda args: args[0].set_nafn(args[1]), lambda args: args[0].get_nafn())]
+        columns += \
+            [Column("B", lambda args: args[0].set_gildi(args[1]), lambda args: args[0].get_gildi())]
+        return columns
+
+    def _get_dto_factory(self):
+        return lambda: StillingarDto()
+
+    def _init_info(self):
+        return StillingarSheetInfo()
+
+
 class HusSheetHandler(SheetHandler):
 
     def __init__(self, wb):
@@ -110,8 +132,12 @@ columns = [
 
 
 class YfirlitSheetHandler(SheetHandler):
-    def _get_columns(self):
 
+    def __init__(self, wb, type):
+        super().__init__(wb)
+        self.__type = type
+
+    def _get_columns(self):
         return columns
 
     def _init_writer(self):
@@ -119,7 +145,7 @@ class YfirlitSheetHandler(SheetHandler):
                                   self._get_info(), self._get_columns())
 
     def _init_info(self):
-        return YfirlitSheetInfo()
+        return YfirlitSheetInfo(self.__type)
 
     def _init_mapper(self):
         return YfirlitMapper()

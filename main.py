@@ -1,7 +1,6 @@
 import openpyxl
 
-from control.AlgorithmException import MaximumAllocationsExceededException, MinVikubilNotMetException, \
-    AlgorithmException
+from control.AlgorithmException import AlgorithmException
 from control.Thrifalisti import Thrifalisti
 from control.ThrifalistiAlgo import ThrifalistiAlgo
 from excel.SheetHandler import HusSheetHandler, ThrifalistiSheetHandler, ForeldriSheetHandler, YfirlitSheetHandler
@@ -16,6 +15,8 @@ def print_sorted_foreldralisti(foreldralisti):
 def compute(wb, algo_config):
     i = 0
 
+    stillingar = __get_stillingar(wb)
+    # TODO listahandler
     husalisti = __get_husalisti(wb)
     foreldralisti = __get_foreldralisti(husalisti, wb)
     thrifalisti = __get_thrifalisti(foreldralisti, husalisti, wb)
@@ -68,18 +69,19 @@ def __reset_listar(husalisti, wb):
 
 
 def __get_thrifalisti(foreldralisti, husalisti, wb):
-    thrifalisti = Thrifalisti(ThrifalistiSheetHandler(wb, husalisti, foreldralisti).read())
-    return thrifalisti
+    return Thrifalisti(ThrifalistiSheetHandler(wb, husalisti, foreldralisti).read())
 
 
 def __get_foreldralisti(husalisti, wb):
-    foreldralisti = ForeldriSheetHandler(wb, husalisti).read()
-    return foreldralisti
+    return ForeldriSheetHandler(wb, husalisti).read()
+
+
+def __get_stillingar(wb):
+    return StillingarSheetHandler(wb).read()
 
 
 def __get_husalisti(wb):
-    husalisti = HusSheetHandler(wb).read()
-    return husalisti
+    return HusSheetHandler(wb).read()
 
 
 def __calc_min_vikubil(foreldralisti):
@@ -90,9 +92,10 @@ def __calc_max_thrif_count(foreldralisti):
     return max([f.get_count() for f in foreldralisti])
 
 
-def write_to_excel_and_save(thrifalisti, foreldralisti, thrifalisti_sheet_handler, yfirlit_handler, wb):
-    yfirlit_handler.write(foreldralisti)
-    thrifalisti_sheet_handler.write(thrifalisti)
+def write_to_excel_and_save(thrifalisti, foreldralisti, husalisti, wb):
+    YfirlitSheetHandler(wb, YfirlitSheetInfo.Types.GS).write(foreldralisti)
+    YfirlitSheetHandler(wb, YfirlitSheetInfo.Types.LS).write(foreldralisti)
+    ThrifalistiSheetHandler(wb, husalisti, foreldralisti).write(thrifalisti)
     wb.save("result.xlsx")
 
 

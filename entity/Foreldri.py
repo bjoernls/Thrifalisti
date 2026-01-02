@@ -4,11 +4,12 @@ from entity.Allocation import Allocation
 
 
 class Foreldri:
-    def __init__(self, nafn, huslisti: [], has_less_thrif=False, has_auka_thrif=False, allocations=None):
+    def __init__(self, nafn, huslisti: [], thrifastada, has_less_thrif=False, has_auka_thrif=False, allocations=None):
         if allocations is None:
             allocations = []
         if has_less_thrif and has_auka_thrif:
             raise ValueError
+        self.__thrifastada = thrifastada
         self.__allocations = allocations
         self.__nafn = nafn
         shuffle(huslisti)
@@ -20,6 +21,9 @@ class Foreldri:
 
     def get_count(self):
         return len(self.__allocations)
+
+    def is_done(self):
+        return self.__thrifastada != 0 and self.get_count() == self.__thrifastada
 
     def get_nafn(self):
         return self.__nafn

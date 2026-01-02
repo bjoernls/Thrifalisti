@@ -1,5 +1,6 @@
 from math import ceil, floor
 
+from control.AlgorithmException import MaximumAllocationsExceededException, MinVikubilNotMetException
 from control.Thrifalisti import Thrifalisti
 from entity.Foreldri import Foreldri
 from linked_list.LeveledLinkedLists import LeveledLinkedLists
@@ -31,7 +32,7 @@ class ThrifalistiAlgo:
             if not alloc_found:
                 self.__leveled_linked_lists.retry()
                 continue
-            elif foreldri.has_less_thrif():
+            elif foreldri.is_done():
                 self.__leveled_linked_lists.discard()
             else:
                 self.__leveled_linked_lists.commit()
@@ -57,7 +58,7 @@ class ThrifalistiAlgo:
         return self.__leveled_linked_lists.is_deadlock()
 
     def __resolve_deadlock(self, thrifalisti):
-        retry_pile = self.__get_retry_pile().copy()
+        retry_pile = list(self.__get_retry_pile().copy())
 
         avail_vikur = list(filter(lambda v: not v.is_full(), thrifalisti.get_vikuthrifalistar()))
 

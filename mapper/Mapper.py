@@ -46,7 +46,7 @@ class ForeldriMapper(Mapper):
         husalisti_mapped = list(map(lambda h: self.__map_hus(h, self.husalisti), foreldri_dto.get_husalisti()))
         if len(husalisti_mapped) == 0:
             husalisti_mapped = list(filter(lambda h: not h.is_exclusift(), self.husalisti))
-        return Foreldri(foreldri_dto.get_nafn(), husalisti_mapped, foreldri_dto.has_less_thrif(),
+        return Foreldri(foreldri_dto.get_nafn(), husalisti_mapped, foreldri_dto.get_thrifastada(), foreldri_dto.has_less_thrif(),
                         foreldri_dto.has_auka_thrif())
 
 
@@ -65,7 +65,7 @@ class ThrifalistiMapper(Mapper):
         for hus in self.__husalisti:
             col = next(filter(lambda c: hus.get_nafn() == self.col_to_hus_map[c.get_pos()], cols))
             foreldri_i_husi = thrifalisti_fyrir_viku.get_foreldri_i_husi(hus)
-            if foreldri_i_husi:
+            if foreldri_i_husi and foreldri_i_husi != "skip":
                 col.setter(dto, hus.get_nafn(), foreldri_i_husi.get_nafn())
             else:
                 col.setter(dto, hus.get_nafn(), None)
@@ -81,8 +81,11 @@ class ThrifalistiMapper(Mapper):
     def __map_foreldri_i_thrifalisti(self, dto, vika):
         for h in self.__husalisti:
             nafn_i_toflu = dto.get_thrif(h.get_nafn())
-            if nafn_i_toflu is not None:
+            if nafn_i_toflu is not None and nafn_i_toflu != "x":
                 vika.set_foreldri_i_husi(h, next((f for f in self.__foreldralisti if f.get_nafn() == nafn_i_toflu)))
+            if nafn_i_toflu == "x":
+                vika.skip_hus(h)
+
 
     def __get_all_non_exclusive_hus(self):
         return list(filter(lambda h: not h.is_exclusift(), self.__husalisti))
