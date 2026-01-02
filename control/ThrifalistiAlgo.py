@@ -3,6 +3,7 @@ from math import ceil, floor
 from control.Thrifalisti import Thrifalisti
 from entity.Foreldri import Foreldri
 from linked_list.LeveledLinkedLists import LeveledLinkedLists
+from control.AlgorithmException import MaximumAllocationsExceededException, MinVikubilNotMetException
 
 
 def get_min_vikubil(vika, vikur):
@@ -11,8 +12,10 @@ def get_min_vikubil(vika, vikur):
 
 class ThrifalistiAlgo:
 
-    def __init__(self, foreldralisti: [Foreldri]):
+    def __init__(self, foreldralisti: [Foreldri], config):
         self.__leveled_linked_lists = LeveledLinkedLists(foreldralisti)
+        self.min_vikubil = config.getint('MinVikubil')
+        self.maximum_allocations = config.getint('MaximumAllocations')
 
     def __calc_max_level(self, foreldralisti, huslisti, viku_fjoldi):
         return ceil(float(len(huslisti) * viku_fjoldi) / len(foreldralisti)) + 1
@@ -32,10 +35,11 @@ class ThrifalistiAlgo:
                 self.__leveled_linked_lists.discard()
             else:
                 self.__leveled_linked_lists.commit()
+        return True
 
     def __find_alloc(self, foreldri, thrifalisti):
         for vikuthrifalisti in self.__get_vikur_ekki_of_nalaegt(thrifalisti, foreldri):
-            if vikuthrifalisti.try_set_foreldri(foreldri):
+            if self.__try_set_foreldri(foreldri, vikuthrifalisti):
                 return True
         return False
 
@@ -70,13 +74,22 @@ class ThrifalistiAlgo:
     def __get_retry_pile(self):
         return self.__leveled_linked_lists.get_retry_pile()
 
-    @staticmethod
-    def __set_foreldri_with_max_vikubil(retry_pile, vikuthrifalisti):
+
+    def __set_foreldri_with_max_vikubil(self, retry_pile, vikuthrifalisti):
         retry_pile.sort(key=lambda foreldri: get_min_vikubil(vikuthrifalisti, foreldri.get_vikur()), reverse=True)
         for f in retry_pile:
-            if vikuthrifalisti.try_set_foreldri(f):
+            if self.__try_set_foreldri(f, vikuthrifalisti):
                 return f
         return None
+
+    def __try_set_foreldri(self, foreldri, vikuthrifalisti):
+        if vikuthrifalisti.try_set_foreldri(foreldri):
+            if foreldri.get_count() > self.maximum_allocations:
+                raise MaximumAllocationsExceededException
+            vikubil = foreldri.get_vikubil()
+            if 0 < vikubil < self.min_vikubil:
+                raise MinVikubilNotMetException
+            return foreldri
 
     def __calc_min_vikubil(self, thrifalisti):
         viku_fjoldi = len(list(filter(lambda v: not v.is_fri(), thrifalisti.get_vikuthrifalistar())))

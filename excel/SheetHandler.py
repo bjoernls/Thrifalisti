@@ -178,7 +178,7 @@ class ThrifalistiSheetHandler(SheetHandler):
         columns = [
             ThrifalistiColumn("A", lambda args: args[0].set_vika_texti(args[1]), lambda dto: dto.get_vika_texti())]
 
-        for s in range(ord("B"), ord("H") + 1):
+        for s in range(ord("B"), ord("G") + 1):
             col_stafur = chr(s)
             columns += [
                 ThrifalistiColumn(col_stafur, lambda args: args[0].add_to_thrifalisti(args[1], args[2]),

@@ -3,7 +3,7 @@ from excel.sheet_infos.SheetInfo import SheetInfo
 
 class ThrifalistiSheetInfo(SheetInfo):
     def get_sheet_name(self):
-        return "Haust_2024"
+        return "Þrifalisti"
 
     def get_start_read_row_col(self):
         return [3, "A"]

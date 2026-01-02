@@ -23,7 +23,7 @@ class LeveledLinkedLists:
             if f.has_auka_thrif():
                 priority_list += [f]
             else:
-                while len(self.all_llls) < f.get_count():
+                while len(self.all_llls) < f.get_count() + 1:
                     self.all_llls += [LinkedList([], RandomStrategy())]
                 self.all_llls[f.get_count()].push(f)
 
