@@ -1,10 +1,10 @@
-from collections import Iterator
+from collections.abc import Iterable
 
 from entity.Foreldri import Foreldri
 
 
 # foreldrar sem fá auka þrif
-class PriorityListIterator(Iterator):
+class PriorityListIterator(Iterable):
 
     def __init__(self, foreldralisti: [Foreldri]):
         self.i = 0

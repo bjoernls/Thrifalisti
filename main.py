@@ -6,6 +6,9 @@ from control.ThrifalistiAlgo import ThrifalistiAlgo
 from excel.SheetHandler import HusSheetHandler, ThrifalistiSheetHandler, ForeldriSheetHandler, YfirlitSheetHandler
 import configparser
 
+from excel.sheet_infos.YfirlitSheetInfo import YfirlitSheetInfo
+
+
 def print_sorted_foreldralisti(foreldralisti):
     foreldralisti.sort(key=lambda foreldri: foreldri.get_vikubil())
     for f in foreldralisti:
@@ -15,7 +18,7 @@ def print_sorted_foreldralisti(foreldralisti):
 def compute(wb, algo_config):
     i = 0
 
-    stillingar = __get_stillingar(wb)
+ #   stillingar = __get_stillingar(wb)
     # TODO listahandler
     husalisti = __get_husalisti(wb)
     foreldralisti = __get_foreldralisti(husalisti, wb)
@@ -43,9 +46,8 @@ def compute(wb, algo_config):
 
     print(str(i) + " runs")
 
-    tl_handler = ThrifalistiSheetHandler(wb, husalisti, foreldralisti)
-    y_handler = YfirlitSheetHandler(wb)
-    write_to_excel_and_save(thrifalisti, foreldralisti, tl_handler, y_handler, wb)
+  #  tl_handler = ThrifalistiSheetHandler(wb, husalisti, foreldralisti)
+    write_to_excel_and_save(thrifalisti, foreldralisti, husalisti, wb)
 
 
 def __verify_leikskoli(foreldralisti, husalisti, thrifalisti):
@@ -76,8 +78,8 @@ def __get_foreldralisti(husalisti, wb):
     return ForeldriSheetHandler(wb, husalisti).read()
 
 
-def __get_stillingar(wb):
-    return StillingarSheetHandler(wb).read()
+#def __get_stillingar(wb):
+#    return StillingarSheetHandler(wb).read()
 
 
 def __get_husalisti(wb):
@@ -107,4 +109,4 @@ if __name__ == '__main__':
     # compute(openpyxl.load_workbook("Testgögn.xlsx"))
     config = configparser.ConfigParser()
     config.read('config.ini')
-    compute(openpyxl.load_workbook("result 5.xlsx"), config['ALGO_PARAMS'])
+    compute(openpyxl.load_workbook("Þrifalisti Sniðmát.xlsx"), config['ALGO_PARAMS'])

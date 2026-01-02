@@ -39,3 +39,6 @@ class VikuThrifalisti:
 
     def is_full(self):
         return self.is_fri() or all([f for f in self.__thrifalisti_fyrir_viku.values()])
+
+    def skip_hus(self, hus):
+        self.__thrifalisti_fyrir_viku[hus] = "skip"

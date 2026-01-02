@@ -1,8 +1,7 @@
-from entity.Foreldri import Foreldri
 from entity.PriorityList import PriorityListIterator
 from entity.Strategy import RandomStrategy
 from linked_list.LinkedList import LinkedList
-
+from entity.Foreldri import Foreldri
 
 class LeveledLinkedLists:
 
@@ -23,9 +22,9 @@ class LeveledLinkedLists:
             if f.has_auka_thrif():
                 priority_list += [f]
             else:
-                while len(self.all_llls) < f.get_count() + 1:
-                    self.all_llls += [LinkedList([], RandomStrategy())]
-                self.all_llls[f.get_count()].push(f)
+                while len(self.__all_llls) < f.get_count() + 1:
+                    self.__all_llls += [LinkedList([], RandomStrategy())]
+                self.__all_llls[f.get_count()].push(f)
 
         self.priority_list_iterator = PriorityListIterator(priority_list)
 
